@@ -1,0 +1,9 @@
+{
+	"name": "DataFactoryVentes",
+	"location": "canadaeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8b56d29a-b4c8-4a72-849e-42c12d4a9085",
+		"tenantId": "2dcf5586-9ea8-4885-ab85-11936f59e16b"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "AzureSqlTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Item_Type",
+				"type": "varchar"
+			},
+			{
+				"name": "AgregateItemPrix",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Ventes"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
