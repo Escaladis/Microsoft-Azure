@@ -14,7 +14,11 @@
 			],
 			"sinks": [
 				{
-					"name": "Sortie"
+					"dataset": {
+						"referenceName": "SqlServerTable2",
+						"type": "DatasetReference"
+					},
+					"name": "sortie"
 				}
 			],
 			"transformations": [
@@ -28,7 +32,7 @@
 					"name": "AgregateItem"
 				}
 			],
-			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\t{Item Type} as string,\n\t\t{Sales Channel} as string,\n\t\t{Order Priority} as string,\n\t\t{Order Date} as string,\n\t\t{Order ID} as string,\n\t\t{Ship Date} as string,\n\t\t{Units Sold} as string,\n\t\t{Unit Price} as string,\n\t\t{Unit Cost} as string,\n\t\t{Total Revenue} as string,\n\t\t{Total Cost} as string,\n\t\t{Total Profit} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Ventes\nVentes derive(OrderDateFinal = coalesce(toDate({Order Date},'MM/dd/yyyy'),toDate({Order Date},'yyyy/MM/dd'),toDate({Order Date},'dd/MM/yyyy'),toDate({Order Date},'yyyyddMM'),toDate({Order Date},'MMddyyyy'),toDate({Order Date},'yyyyMMdd'))) ~> OrderDate\nOrderDate filter(toString({OrderDateFinal})>= toString('2013-01-01') && toString({OrderDateFinal})<= toString('2016-12-31')) ~> OrderDateFilter\nOrderDateFilter aggregate(groupBy({Item Type}),\n\tAgregateItemPrix = avg(toInteger({Unit Price}))) ~> AgregateItem\nAgregateItem sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> Sortie"
+			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\t{Item Type} as string,\n\t\t{Sales Channel} as string,\n\t\t{Order Priority} as string,\n\t\t{Order Date} as string,\n\t\t{Order ID} as string,\n\t\t{Ship Date} as string,\n\t\t{Units Sold} as string,\n\t\t{Unit Price} as string,\n\t\t{Unit Cost} as string,\n\t\t{Total Revenue} as string,\n\t\t{Total Cost} as string,\n\t\t{Total Profit} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Ventes\nVentes derive(OrderDateFinal = coalesce(toDate({Order Date},'MM/dd/yyyy'),toDate({Order Date},'yyyy/MM/dd'),toDate({Order Date},'dd/MM/yyyy'),toDate({Order Date},'yyyyddMM'),toDate({Order Date},'MMddyyyy'),toDate({Order Date},'yyyyMMdd'))) ~> OrderDate\nOrderDate filter(toString({OrderDateFinal})>= toString('2013-01-01') && toString({OrderDateFinal})<= toString('2016-12-31')) ~> OrderDateFilter\nOrderDateFilter aggregate(groupBy({Item Type}),\n\tAgregateItemPrix = avg(toInteger({Unit Price}))) ~> AgregateItem\nAgregateItem sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1) ~> sortie"
 		}
 	}
 }
