@@ -15,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Chaîne sécurisée pour « connectionString » de « AzureSqlDatabase1 »"
 		},
-		"SqlServer1_connectionString": {
-			"type": "secureString",
-			"metadata": "Chaîne sécurisée pour « connectionString » de « SqlServer1 »"
-		},
 		"Sail_connectionString": {
 			"type": "secureString",
 			"metadata": "Chaîne sécurisée pour « connectionString » de « Sail »"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Chaîne sécurisée pour « connectionString » de « SqlServer1 »"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
@@ -60,11 +60,11 @@
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
-					"SqlServer1_connectionString": {
-						"value": "[parameters('SqlServer1_connectionString')]"
-					},
 					"Sail_connectionString": {
 						"value": "[parameters('Sail_connectionString')]"
+					},
+					"SqlServer1_connectionString": {
+						"value": "[parameters('SqlServer1_connectionString')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"

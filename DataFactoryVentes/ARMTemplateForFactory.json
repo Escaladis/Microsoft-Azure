@@ -15,13 +15,13 @@
 			"type": "secureString",
 			"metadata": "Chaîne sécurisée pour « connectionString » de « AzureSqlDatabase1 »"
 		},
-		"SqlServer1_connectionString": {
-			"type": "secureString",
-			"metadata": "Chaîne sécurisée pour « connectionString » de « SqlServer1 »"
-		},
 		"Sail_connectionString": {
 			"type": "secureString",
 			"metadata": "Chaîne sécurisée pour « connectionString » de « Sail »"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Chaîne sécurisée pour « connectionString » de « SqlServer1 »"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
@@ -57,7 +57,7 @@
 								"parameters": {},
 								"datasetParameters": {
 									"Ventes": {},
-									"sortie": {}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -217,6 +217,48 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Sail",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "",
+					"table": "sailsss"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Sail')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "",
+					"table": "Vinzari"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServer1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -242,6 +284,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sail')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Sail_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -278,10 +333,10 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "SqlServerTable2",
+								"referenceName": "SqlServerTable3",
 								"type": "DatasetReference"
 							},
-							"name": "sortie"
+							"name": "sink1"
 						}
 					],
 					"transformations": [
@@ -295,46 +350,12 @@
 							"name": "AgregateItem"
 						}
 					],
-					"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\t{Item Type} as string,\n\t\t{Sales Channel} as string,\n\t\t{Order Priority} as string,\n\t\t{Order Date} as string,\n\t\t{Order ID} as string,\n\t\t{Ship Date} as string,\n\t\t{Units Sold} as string,\n\t\t{Unit Price} as string,\n\t\t{Unit Cost} as string,\n\t\t{Total Revenue} as string,\n\t\t{Total Cost} as string,\n\t\t{Total Profit} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Ventes\nVentes derive(OrderDateFinal = coalesce(toDate({Order Date},'MM/dd/yyyy'),toDate({Order Date},'yyyy/MM/dd'),toDate({Order Date},'dd/MM/yyyy'),toDate({Order Date},'yyyyddMM'),toDate({Order Date},'MMddyyyy'),toDate({Order Date},'yyyyMMdd'))) ~> OrderDate\nOrderDate filter(toString({OrderDateFinal})>= toString('2013-01-01') && toString({OrderDateFinal})<= toString('2016-12-31')) ~> OrderDateFilter\nOrderDateFilter aggregate(groupBy({Item Type}),\n\tAgregateItemPrix = avg(toInteger({Unit Price}))) ~> AgregateItem\nAgregateItem sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1) ~> sortie"
+					"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\t{Item Type} as string,\n\t\t{Sales Channel} as string,\n\t\t{Order Priority} as string,\n\t\t{Order Date} as string,\n\t\t{Order ID} as string,\n\t\t{Ship Date} as string,\n\t\t{Units Sold} as string,\n\t\t{Unit Price} as string,\n\t\t{Unit Cost} as string,\n\t\t{Total Revenue} as string,\n\t\t{Total Cost} as string,\n\t\t{Total Profit} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Ventes\nVentes derive(OrderDateFinal = coalesce(toDate({Order Date},'MM/dd/yyyy'),toDate({Order Date},'yyyy/MM/dd'),toDate({Order Date},'dd/MM/yyyy'),toDate({Order Date},'yyyyddMM'),toDate({Order Date},'MMddyyyy'),toDate({Order Date},'yyyyMMdd'))) ~> OrderDate\nOrderDate filter(toString({OrderDateFinal})>= toString('2013-01-01') && toString({OrderDateFinal})<= toString('2016-12-31')) ~> OrderDateFilter\nOrderDateFilter aggregate(groupBy({Item Type}),\n\tAgregateItemPrix = avg(toInteger({Unit Price}))) ~> AgregateItem\nAgregateItem sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1) ~> sink1"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
-				"[concat(variables('factoryId'), '/datasets/SqlServerTable2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Sail')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('Sail_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlServerTable2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Sail",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "",
-					"table": "sailsss"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Sail')]"
+				"[concat(variables('factoryId'), '/datasets/SqlServerTable3')]"
 			]
 		}
 	]

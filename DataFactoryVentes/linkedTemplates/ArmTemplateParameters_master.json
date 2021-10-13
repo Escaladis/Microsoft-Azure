@@ -11,10 +11,10 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"SqlServer1_connectionString": {
+		"Sail_connectionString": {
 			"value": ""
 		},
-		"Sail_connectionString": {
+		"SqlServer1_connectionString": {
 			"value": ""
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
